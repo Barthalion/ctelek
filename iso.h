@@ -21,12 +21,12 @@ typedef char boolean;
 typedef char TByteRow[MaxNodeNo];
 
 typedef struct _REC_TBoolRecArray {
-          boolean Left, Right;
-        } _REC_TBoolRecArray;
+    boolean Left, Right;
+} _REC_TBoolRecArray;
 
 typedef struct _REC_TByteRecArray {
-          char Left, Right;
-        } _REC_TByteRecArray;
+    char Left, Right;
+} _REC_TByteRecArray;
 
 typedef _REC_TBoolRecArray TBoolRecArray[MaxNodeNo];
 typedef _REC_TByteRecArray TByteRecArray[MaxNodeNo];
@@ -36,9 +36,9 @@ typedef boolean TAlTable[MaxNodeNo][MaxNodeNo];
 
 
 typedef struct TGraph {
-			 TAlTable A;
-			 TByteRow Deg, DegSort;
-		  } TGraph;
+    TAlTable A;
+    TByteRow Deg, DegSort;
+} TGraph;
 
 /* externals */
 /*
@@ -48,8 +48,8 @@ void ConvertToComplement(TGraph *,
 */
 
 extern boolean EqualGraphs(int,
-									TGraph*,
-									TGraph*  );
+                           TGraph*,
+                           TGraph*  );
 
 
 #endif
