@@ -9,23 +9,24 @@
 
 typedef int t[nmax];
 
-void czyt(int *n, int *z);
+clock_t pomiar(void);
 void czyt1(int *n, int *z, int *rep);
-void generacja(int n, int z, t a);
-void druk(int n, t a);
-void sort(int n, t a);
-void maxindeks(int n, int integer, t a, int *k);
-void sort1(int n, t a);
+void czyt(int *n, int *z);
 void druk1(int n, int z, t a);
 void druk2(int n, t a);
-clock_t pomiar(void);
+void druk(int n, t a);
+void generacja(int n, int z, t a);
 void kopiuj_tablice(int n, t b, t a);
+void maxindeks(int n, int integer, t a, int *k);
+void sort1(int n, t a);
+void sort(int n, t a);
 
 int main(void)
 {
     int n, z, rep, wariant;
     t a, b;
     clock_t czas1, czas2;
+
     randomize();
 
     printf("Info INT_MAX: %d\n", INT_MAX);
