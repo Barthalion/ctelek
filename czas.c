@@ -67,7 +67,7 @@ void czyt(int *n, int *z)
 {
     do {
         printf("n,z = ");
-        scanf("%d,%d", n, z);
+        scanf("%d %d", n, z);
     } while (*n > nmax);
 
 }
@@ -76,7 +76,7 @@ void czyt1(int *n, int *z, int *rep)
 {
     do {
         printf("n,z,rep = ");
-        scanf("%d,%d,%d", n, z, rep);
+        scanf("%d %d %d", n, z, rep);
     } while ((*n > nmax) && (*z > 32000) && (*rep > 100000));
 }
 
