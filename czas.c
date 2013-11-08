@@ -3,10 +3,7 @@
 #include <time.h>
 #include <limits.h>
 
-#define randomize() srand((unsigned)time(NULL))
-#define random(a) rand()%a
 #define nmax 101
-
 typedef int t[nmax];
 
 clock_t pomiar(void);
@@ -27,7 +24,7 @@ int main(void)
     t a, b;
     clock_t czas1, czas2;
 
-    randomize();
+    srand((unsigned) time(NULL))
 
     printf("Info INT_MAX: %d\n", INT_MAX);
 
@@ -86,7 +83,7 @@ void czyt1(int *n, int *z, int *rep)
 void generacja(int n, int z, t a)
 {
     for (int i = 1; i <= n; i++)
-        a[i] = random(z)+1;
+        a[i] = (rand() % z) + 1;
 }
 
 void druk(int n, t a)
