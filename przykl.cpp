@@ -1,88 +1,94 @@
 //program p1	KTB Oct 1, 1996
-# include <stdio.h>
-# include <stdlib.h>
-# include <conio.h>
-# include <time.h>
 
-#define random(a) rand() % a
-#define randomize() srand(unsigned(time(NULL)))
-#define nmax 101
+#include <iostream>
+#include <ctime>
+#include <cstdlib>
 
-typedef int t[nmax];
+using namespace std;
 
-void czyt(int *n, int *z);
-void generacja(int n, int z, t a);
-int Min(int n, t a);
+const int nmax = 100;
+
+inline int random(int poczatek_zakresu, int koniec_zakresu)
+{
+	return ((rand() % (koniec_zakresu + 1 + poczatek_zakresu)) - poczatek_zakresu);
+}
+
+void czytaj(int &liczba_elementow, int &zakres_wartosci);
+void generacja(int tablica[], int liczba_elementow, int zakres_wartosci);
+int Min(int tablica[], int liczba_elementow);
 /*
-  int Max(int n, t a);
-  int Max1(int n, t a, int * poz);
-  float Srednia(int n, t a);
-*/
-void obl(int n, t a, int *m);
-void druk(int n, int z, t a, int m);
+ *  int Max(int tablica[], int liczba_elementow);
+ *  int Max_z_pozycja(int tablica[], int liczba_elementow, int &pozycja);
+ *  float Srednia(int tablica[], int liczba_elementow);
+ */
+void drukuj(int tablica[], int liczba_elementow, int zakres_wartosci);
 
 
 int main()
 {
-    int m,n,z;
-    t a;
+	bool wyjdz = 0;
+	short wybor;
+	int liczba_elementow, zakres_wartosci, liczba_powtorzen;
+	int wygenerowane[nmax];
 
-    randomize();
-    do {
-        czyt(&n,&z);
-        generacja(n,z,a);
-        obl(n,a,&m);
-        druk(n,z,a,m);
-        printf("koniec? 0/1\n");
-    } while (getch()!='1');
-    return 0;
-} //main
+	srand(unsigned(time(NULL)));
 
+	while (!wyjdz) {
+		cout << "Wybierz wariant (1,0 - wyjscie): ";
+		cin >> wybor;
+		switch (wybor) {
+		case 0:
+			wyjdz = 1;
+			break;
+		case 1:
+			czytaj(liczba_elementow, zakres_wartosci);
+			generacja(wygenerowane, liczba_elementow, zakres_wartosci);
+			drukuj(wygenerowane, liczba_elementow, zakres_wartosci);
+			break;
+		default:
+			cout << "Taki wariant nie istnieje" << endl;
+		}
+	}
 
-void czyt(int *n, int *z)
+	return 0;
+}
+
+void czytaj(int &liczba_elementow, int &zakres_wartosci)
 {
-    do {
-        printf("n,z= ");
-        scanf("%d%d",n,z);
-    } while (*n > nmax);
+	do {
+		cout << "[Wprowadz liczebnosc zbioru oraz zakres wartosci oddzielone spacja] n,z = ";
+		cin >> liczba_elementow >> zakres_wartosci;
+	} while (liczba_elementow > nmax);
+}
 
-} //czyt
-
-void generacja(int n, int z, t a)
+void generacja(int tablica[], int liczba_elementow, int zakres_wartosci)
 {
-    int i;
-    for(i=1; i<=n; i++)
-        a[i]=random(z)+1;
-} //generacja
+	for (int i = 0; i < liczba_elementow; i++) {
+		tablica[i] = random(0, zakres_wartosci);
+	}
+}
 
-int Min(int n, t a)
+int Min(int tablica[], int liczba_elementow)
 {
-    int i,x;
-    x=a[1];
-    for(i=2; i<=n; i++)
-        if(a[i]<x)
-            x=a[i];
-    return x;
-} //Min
+	int wartosc_minimalna;
+	wartosc_minimalna = tablica[0];
+	for (int i = 1; i < liczba_elementow; i++)
+		if (tablica[i] < wartosc_minimalna) {
+			wartosc_minimalna = tablica[i];
+		}
+	return wartosc_minimalna;
+}
 
-void obl(int n, t a, int *m)
+void drukuj(int tablica[], int liczba_elementow, int zakres_wartosci)
 {
-    *m=Min(n,a);
-} //obl
+	cout << endl << "Elementy ciagu n = " << liczba_elementow << ", z = " << zakres_wartosci << ":" << endl;
+	for (int i = 0; i < liczba_elementow; i++) {
+		cout << tablica[i] << " ";
+		if (((i + 1) % 10 == 0) && (i != 0)) {
+			cout << endl;
+		}
+	}
+	cout << endl << endl;
 
-void druk(int n, int z, t a, int m)
-{
-    int i;
-    printf("\n");
-    printf("Elementy ciagu, n= %d,z= %d \n",n,z);
-    for(i=1; i<=n; i++) {
-        printf("%4d", a[i]);
-        if(i % 10==0)
-            printf("\n");
-    }
-    printf("\n");
-
-    printf("Element minimalny: %d\n",m);
-} //druk
-
-
+	cout << "Element minimalny: " << Min(tablica, liczba_elementow) << endl << endl;
+}
