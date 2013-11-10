@@ -1,88 +1,85 @@
-//program p1	KTB Oct 1, 1996
-# include <stdio.h>
-# include <stdlib.h>
-# include <conio.h>
-# include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
-#define random(a) rand() % a
-#define randomize() srand(unsigned(time(NULL)))
-#define nmax 101
-
+#define nmax 100
 typedef int t[nmax];
 
-void czyt(int *n, int *z);
-void generacja(int n, int z, t a);
+/* int Max(int n, t a);
+ * int Max1(int n, t a, int * poz);
+ * loat Srednia(int n, t a); */
 int Min(int n, t a);
-/*
-  int Max(int n, t a);
-  int Max1(int n, t a, int * poz);
-  float Srednia(int n, t a);
-*/
-void obl(int n, t a, int *m);
+void czyt(int *n, int *z);
 void druk(int n, int z, t a, int m);
+void generacja(int n, int z, t a);
+void obl(int n, t a, int *m);
 
-
-int main()
+int main(void)
 {
-    int m,n,z;
+    int m, n, z, wariant;
     t a;
 
-    randomize();
-    do {
-        czyt(&n,&z);
-        generacja(n,z,a);
-        obl(n,a,&m);
-        druk(n,z,a,m);
-        printf("koniec? 0/1\n");
-    } while (getch()!='1');
-    return 0;
-} //main
+    while (1) {
+        printf("Wybierz wariant (0/1): ");
+        scanf("%d", &wariant);
 
+        switch (wariant) {
+            case 0:
+                exit(EXIT_SUCCESS);
+            case 1:
+                srand((unsigned) time(NULL));
+                czyt(&n, &z);
+                generacja(n, z, a);
+                obl(n, a, &m);
+                druk(n, z, a, m);
+                break;
+            default:
+                printf("taki wariant nie istnieje!\n");
+                exit(EXIT_FAILURE);
+}
+    }
+
+    exit(EXIT_SUCCESS);
+}
 
 void czyt(int *n, int *z)
 {
     do {
         printf("n,z= ");
-        scanf("%d%d",n,z);
+        scanf("%d %d", n, z);
     } while (*n > nmax);
-
-} //czyt
+}
 
 void generacja(int n, int z, t a)
 {
-    int i;
-    for(i=1; i<=n; i++)
-        a[i]=random(z)+1;
-} //generacja
+    for (int i = 0; i < n; i++)
+        a[i] = rand() % z + 1;
+}
 
 int Min(int n, t a)
 {
-    int i,x;
-    x=a[1];
-    for(i=2; i<=n; i++)
-        if(a[i]<x)
-            x=a[i];
+    int x = a[0];
+    for (int i = 1; i < n; i++)
+        if (a[i] < x)
+            x = a[i];
     return x;
-} //Min
+}
 
 void obl(int n, t a, int *m)
 {
-    *m=Min(n,a);
-} //obl
+    *m = Min(n, a);
+}
 
 void druk(int n, int z, t a, int m)
 {
-    int i;
-    printf("\n");
-    printf("Elementy ciagu, n= %d,z= %d \n",n,z);
-    for(i=1; i<=n; i++) {
+    printf("\nElementy ciagu, n=%d, z=%d\n", n, z);
+    for (int i = 0; i < n; i++) {
         printf("%4d", a[i]);
-        if(i % 10==0)
+        if ((i % 10 == 0) && (i > 0))
             printf("\n");
     }
     printf("\n");
 
-    printf("Element minimalny: %d\n",m);
-} //druk
-
+    printf("Element minimalny: %d\n", m);
+}
 
