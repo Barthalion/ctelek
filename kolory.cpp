@@ -9,10 +9,13 @@ using namespace std;
 
 const int NMAX = 100;
 
+// Returns random int lesser than a
 inline int random(int a) {
 	return rand() % a;
 }
 
+// Makes a random choice between true and false
+// Returns true with *probability*
 inline bool coinflip(double probability) {
 	return rand() <= probability * RAND_MAX;
 }
@@ -32,6 +35,8 @@ int max_in_array(int n, int x[])
 	return m;
 }
 
+// Prints sets of independent nodes
+// Nodes are independent when there is no edge between them.
 void print_independent_sets(int node_count, int set_count, bool sets[][NMAX]) {
 	cout << "Niezalezne zbiory: " << endl;
 	for (int set = 0; set < set_count; set++) {
@@ -57,17 +62,20 @@ void print_graph(int node_count, bool graph[][NMAX]) {
 	cout << endl << endl;
 }
 
+// Colors *node* with the lowest possible color
 void color_node(int node_count, int node, bool graph[][NMAX], int colors[]) {
-	// okreœl kolory sasiadow wierzcho³ka node
-	// color = -1 oznacza wierzcholek niepokolorowany
+
+	// Determine colors of *node* neighbors
 	bool neighbor_colors[NMAX] = { false };
 	for (int i = 0; i < node_count; i++) {
+		// -1 means uncolored node
 		if (graph[node][i] && colors[i] != -1) {
 			neighbor_colors[colors[i]] = true;
 		}
 	}
 
-	// pokoloruj node najnizszym kolorem który nie nalezy do sasiada
+	// Find the lowest color not taken by a neighbor
+	// Color *node* with it
 	for (int color = 0; color < node_count; color++) {
 		if (!neighbor_colors[color]) {
 			colors[node] = color;
@@ -76,14 +84,18 @@ void color_node(int node_count, int node, bool graph[][NMAX], int colors[]) {
 	}
 }
 
+// Colors graph by picking random nodes and coloring them with lowest possible color
 void color_graph_monte_carlo(int node_count, bool graph[][NMAX], int colors[]) {
 	bool visited[NMAX] = { false };
 	int visited_count = 0;
 
-	for (int i = 0; i < node_count; i++)	// przygotowanie tablicy kolorow
+	// Reset all colors to -1 (not colored)
+	for (int i = 0; i < node_count; i++) {
 		colors[i] = -1;
+	}
 
 	while (visited_count < node_count) {
+		// Pick random node and check if it was not already visited.
 		int node = random(node_count);
 		if (visited[node]) {
 			continue;
@@ -91,19 +103,21 @@ void color_graph_monte_carlo(int node_count, bool graph[][NMAX], int colors[]) {
 		visited[node] = true;
 		visited_count++;
 
-		for (int i = 0; i < node_count; i++) {
-			color_node(node_count, i, graph, colors);
-		}
+		// Color *node* with lowest possible color
+		color_node(node_count, node, graph, colors);
+		
 	}
 }
 
+// Finds sets of independent nodes using Monte Carlo method.
+// Nodes are independent when there is no edge between them.
 void find_independent_sets(int node_count, int trials, bool graph[][NMAX], int *set_count, bool sets[][NMAX]) {
 	if (trials == 0) {
 		return;
 	}
 	
-	// make _trials_ attempts to find best coloring using Monte Carlo method
-	int* colors = new int[node_count]();
+	// Make *trials* attempts to find best coloring using Monte Carlo method
+	int* colors = new int[node_count];
 	int best_chromatic_number = node_count + 1;
 	for (int i = 0; i < trials; i++) {
 		int* coloring_attempt = new int[node_count];
@@ -117,6 +131,7 @@ void find_independent_sets(int node_count, int trials, bool graph[][NMAX], int *
 		}
 	}
 
+	// Reset *sets* to false.
 	*set_count = best_chromatic_number;
 	for (int color = 0; color < *set_count; color++) {
 		for (int node = 0; node < node_count; node++) {
@@ -124,6 +139,8 @@ void find_independent_sets(int node_count, int trials, bool graph[][NMAX], int *
 		}
 	}
 
+	// Each color corresponds to an independent set.
+	// Fill *sets* using the best coloring we've found
 	for (int node = 0; node < node_count; node++) {
 		int color = colors[node];
 		sets[color][node] = true;
@@ -143,6 +160,7 @@ void calculate_node_degrees(int node_count, bool graph[NMAX][NMAX], int degrees[
 	}
 }
 
+// Colors nodes with *degree* in *graph*, and recursively goes to lower degrees.
 void color_graph_recursive(int node_count, int degree, bool graph[][NMAX], int degrees[], int colors[]) {
 	if (degree < 0)
 		return;
@@ -163,12 +181,17 @@ void color_graph(int node_count, bool graph[][NMAX], int degrees[], int colors[]
 {
 	calculate_node_degrees(node_count, graph, degrees);
 
-	int max_degree = max_in_array(node_count, degrees);						// max stopien
-	for (int i = 0; i < node_count; i++)									// przygotowanie tablicy kolorow
-		colors[i] = -1;
-	color_graph_recursive(node_count, max_degree, graph, degrees, colors);	// kolorowanie poczawszy od wierzcholkow o stopniu delta
-} // kolor
+	int max_degree = max_in_array(node_count, degrees);
 
+	// Reset all colors to -1 (no color)
+	for (int i = 0; i < node_count; i++)
+		colors[i] = -1;
+
+	// Start coloring the graph with highest degree nodes
+	color_graph_recursive(node_count, max_degree, graph, degrees, colors);
+}
+
+// Fills *graph* with random graph where each edge has *probability* chance to exist
 void generate_graph_by_probability(int node_count, double probability, bool graph[][NMAX]) {
 	for (int i = 0; i < node_count; i++)
 		graph[i][i] = false;
@@ -181,6 +204,7 @@ void generate_graph_by_probability(int node_count, double probability, bool grap
 	}
 }
 
+// Fills *graph* with random graph containing *edge_count* edges
 void generate_graph_by_edges(int node_count, int edge_count, bool graph[][NMAX]) {
 	for (int i = 0; i < node_count; i++)
 	for (int j = 0; j < node_count; j++)
@@ -233,6 +257,8 @@ int ask_for_repetitions() {
 	return n;
 }
 
+// Create random graph with given number of edges
+// Color it and find all independent node sets
 void variant1() {
 	int node_count = ask_for_node_count();
 	int edge_count = ask_for_edge_count();
@@ -266,6 +292,8 @@ void variant1() {
 	}
 }
 
+// Create random graph with given probability of edge existence
+// Color it
 void variant2() {
 	int node_count = ask_for_node_count();
 	double probability = ask_for_edge_probability();
@@ -294,6 +322,7 @@ void variant2() {
 	cout << endl;
 }
 
+// Execution time measure for variant2
 void variant3() {
 	int node_count = ask_for_node_count();
 	double probability = ask_for_edge_probability();
@@ -429,15 +458,3 @@ int main()
 
 	return 0;
 }
-
-void stat(int alltr, int rep, int Q[], float *x, float *y)
-{
-	float s = 0;
-	for (int i = 0; i <= alltr; i++)
-		s += (Q[i] / (float)rep)*i;
-	*x = s;
-	s = 0;
-	for (int i = 0; i <= alltr; i++)
-		s += (Q[i] / (float)rep)*(i - *x)*(i - *x);    //sqr(i-*x);
-	*y = s;
-} //stat
