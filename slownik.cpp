@@ -1,262 +1,216 @@
 //program p11, KTB Dec 10, 1996
-#include <stdio.h>
-//#include <alloc.h>
-#include <stdlib.h>
-#include <time.h>
-#include <conio.h>
-# include <limits.h>
+#include <iostream>
+#include <string>
+#include <ctime>
 
-#define randomize() srand(unsigned(time(NULL)))
-#define random(a) rand()%a
-#define Random() (rand()%10000)*0.0001
+using namespace std;
 
-# define cmax 16
+struct dictionary_node {
+	string value;
+	dictionary_node* next = NULL;
+};
 
-typedef char t[cmax];   //slowo
+struct dictionary {
+	char binding;
+	dictionary_node *data = NULL;
+	dictionary *next = NULL;
+};
 
-typedef struct REF {
-    t a;
-    struct REF * next;
-} ref;                        // lista slow
-
-typedef struct R {
-    char a;
-    ref *next;
-    struct R * nextpion;
-} refpion;                    // lista krawedzi
-enum Boolean {falsz=0, prawda=1};
-
-
-void czyt1(int *n, int *c);
-void czyt(int nr, int c, t x);
-void pushpion(char x, refpion **h);
-void push(int c,t x, ref **h);
-void memberpion(char x, refpion *h, refpion **gdzie);
-enum Boolean member(t x, ref *h);
-void intopion(char x, refpion **s, refpion **);
-void skorowidz1(int n, int c, refpion **H);
-void skorowidz2(int n, int c,refpion **S, refpion **H);
-void druklista(int c,char x,ref *h);
-void drukH(int c,refpion *H);
-void zwolnij(ref *head);
-clock_t pomiar(void);
-void kopiuj_tablice(int c,t b, t a);
-
-
-int main ()
-{
-    int c,n,wariant;
-    refpion *H, *S;
-    clock_t czas1, czas2;
-
-    randomize();
-    do {
-        printf("Wariant: (1/2/3/4/5)");
-        scanf("%d",&wariant);
-        switch(wariant) {
-        case 1: { //konstr i druk skorowidza z dopisywaniem na poczatku
-            czyt1(&n,&c);//n-liczba slow, c-dlugosc slowa
-            skorowidz1(n,c,&H);//konstr z pushpion
-            drukH(c,H); //drukowanie skorowidza
-            break;
-        } // 1
-        case 2: { //konstr i druk skorowidza z dopisywaniem na koncu
-            czyt1(&n,&c);
-            skorowidz2(n,c,&S,&H);//konstr z intopion
-            drukH(c,H);
-            break;
-        } //2
-        case 3: { //jak wariant 2 ale rowniez z dopisywaniem slow na koncu listy
-            //czyt1(&n,&c);
-            //skorowidz3(n,c,&S,&H); //zadanie domowe
-            //drukH(c,H);
-            break;
-        } //3
-        case 4: { //jak wariant 3 ale czytanie danych z pliku tekstowego
-            //czyt1(&n,&c);
-            //skorowidz4(n,c,&S,&H); //zadanie domowe
-            //drukH(c,H);
-            break;
-        } //4
-        case 5: { //czas sortowania na liscie poziomej, zadanie domowe
-            czas2=pomiar();
-            //
-            czas1=pomiar();
-            printf("czas: %f [s]\n", (float)(czas2 - czas1) / (float)CLK_TCK);
-            break;
-        } //5
-        default: {
-            printf("Taki wariant nie istnieje!\n");
-        }
-        } // switch
-        printf("koniec? 0/1\n");
-    } while (getch()!='1');
-
-    return 0;
+inline int ask_for_word_count() {
+	int ret;
+	cout << "Podaj ilosc slow: " << endl;
+	cin >> ret;
+	// clear cin
+	cin.ignore(1000, '\n');
+	return ret;
 }
 
+inline string ask_for_word() {
+	string ret;
+	cout << "Podaj slowo ktore zostanie dodane do slownika" << endl;
+	cin >> ret;
+	// clear cin
+	cin.ignore(1000, '\n');
+	return ret;
+}
 
-void czyt1(int *n, int *c)
-{
-    printf("n,c (n slow, c znakow kazde) : ");
-    scanf("%d%d",n,c);
-} //czyt1
+// Adds *word* as the first element of list
+// Returns pointer to new start
+dictionary_node* add_to_list_at_start(string word, dictionary_node* list) {
+	dictionary_node* new_list = new dictionary_node();
+	new_list->value = word;
+	new_list->next = list;
+	return new_list;
+}
 
-void czyt(int nr, int c, t x)
-{
-    int i;
-    t pom;
-    printf("nr= %d  ",nr);
-    scanf("%s",pom);
-    for(i=1; i<=c+1; i++)
-        //scanf("%c",&x[i]);
-        x[i]=pom[i-1];
-} //czyt
+// Adds word to dict if dict already contains a list for word[0]
+// Returns true if word was added, false otherwise.
+bool _add_to_dict(string word, dictionary* dict) {
+	char binding = word[0];
+	if (dict->binding == binding) {
+		dict->data = add_to_list_at_start(word, dict->data);
+		return true;
+	} else if (dict->next == NULL){
+		return false;
+	} else {
+		return _add_to_dict(word, dict->next);
+	}
+}
 
-void pushpion(char x, refpion **h)
-{
-    refpion *p;
-    p=(refpion*)malloc(sizeof(refpion));
-    if(p!=NULL) {
-        p->a=x;
-        p->next=NULL;
-        p->nextpion=*h;
-        *h=p;
-    }
-} //pushpion
+// Creates a new dictionary containing *word*
+dictionary* new_dictionary(string word) {
+	dictionary *new_dict = new dictionary();
+	new_dict->binding = word[0];
+	new_dict->data = new dictionary_node();
+	new_dict->data->value = word;
+	return new_dict;
+}
 
-void push(int c,t x, ref **h)
-{
-    ref *p;
-    p=(ref*)malloc(sizeof(ref));
-    if(p!=NULL) {
-        kopiuj_tablice(c,p->a,x);
-        p->next=*h;
-        *h=p;
-    }
-}  //push
+// Adds *word* to *dict*
+// If *dict* does not contain a list for word[0], new list is created at the end.
+void add_to_dict_at_end(string word, dictionary* dict) {
 
-void memberpion(char x, refpion *h, refpion **gdzie)
-{
-    *gdzie=NULL; //nie znaleziono na liscie pionowej
-    while((h!=NULL)&& (*gdzie==NULL))
-        if(h->a==x)
-            *gdzie=h;
-        else
-            h=h->nextpion;
-}// memberpion
+	// Try adding word to existing lists in *dict*
+	bool added_to_existing = _add_to_dict(word, dict);
+	if (added_to_existing) return;
 
-enum Boolean member(t x, ref *h)
-{
-    enum Boolean jest;
-    jest=falsz;
-    while((h!=NULL)&& (!jest))
-        if(h->a==x)
-            jest=prawda;
-        else h=h->next;
-    return jest;
-} //member
+	// Find last element in the dict
+	while (dict->next != NULL){
+		dict = dict->next;
+	}
 
-void intopion(char x, refpion **s, refpion **h)
-{
-    refpion *p;
-    p=(refpion*)malloc(sizeof(refpion));
-    if(p!=NULL) {
-        p->a=x;
-        p->next=NULL;
-        p->nextpion=NULL;
-    }
-    if(*h!=NULL)
-        (*s)->nextpion=p;
-    else
-        *h=p;
-    *s=p;
-} //intopion
+	// Build new dict and add it to the end
+	dict->next = new_dictionary(word);
+}
 
-void skorowidz1(int n, int c, refpion **H)
-{
-    int i;
-    t x;
-    refpion *gdzie;
-    *H=NULL;
-    for(i=1; i<=n; i++) {
-        czyt(i,c,x);
-        memberpion(x[1],*H,&gdzie);
-        if(gdzie==NULL) {
-            pushpion(x[1],H);
-            push(c,x,&(*H)->next);
-        } else if(!member(x,gdzie->next))
-            push(c,x,&gdzie->next);
-    }
-}  //skorowidz1
+// Adds *word* to *dict*
+// If *dict* does not contain a list for word[0], new list is created at the beginning.
+// Returns pointer to resulting dict
+dictionary* add_to_dict_at_start(string word, dictionary* dict) {
+	char binding = word[0];
 
-void skorowidz2(int n, int c,refpion **S, refpion **H)//intopion
-{
-    int i;
-    t x;
-    refpion *gdzie;
-    *H=NULL;
-    for(i=1; i<=n; i++) {
-        czyt(i,c,x);
-        memberpion(x[1],*H,&gdzie);
-        if(gdzie==NULL) {
-            intopion(x[1],S,H);
-            push(c,x,&(*S)->next);
-        } else if(!member(x,gdzie->next))
-            push(c,x,&gdzie->next);
-    }
+	// Try adding word to existing lists in *dict*
+	bool added_to_existing = _add_to_dict(word, dict);
 
-} //skorowidz2
+	// If word was added to existing lists, we have nothing else to do.
+	if (added_to_existing) return dict;
 
-void druklista(int c,char x,ref *h)
-{
-    int i,j;
-    printf("  lista %c : ",x);
-    i=0; //licznik wydrukowanych elementow listy
-    while(h!=NULL) {
-        for(j=1; j<=c+1; j++)
-            printf("%c",h->a[j]);
-        i++;
-        if(i%5==0)
-            printf("\n");
-        h=h->next;
-    }
-    printf("\n");
-}  //druklista
+	// Build new dict
+	dictionary *new_dict = new_dictionary(word);
 
-void drukH(int c,refpion *H)
-{
-    printf("\nSkorowidz : \n");
-    while(H!=NULL) {
-        druklista(c,H->a,H->next);
-        H=H->nextpion;
-    }
-} // drukH
+	// Append old dictionary to it and return new start.
+	new_dict->next = dict;
+	return new_dict;
+}
 
-void zwolnij(ref *h)
-{
-    ref *p;
-    while(h!=NULL) {
-        p=h;
-        h=h->next;
-        p->next=NULL;
-        free(p);
-    }
-} //zwolnij
+void print_list(dictionary_node* list) {
+	while (list != NULL) {
+		cout << list->value << " ";
+		list = list->next;
+	}
+}
 
-clock_t pomiar(void)
-{
-    clock_t czas;
-    czas = clock();
-    return czas;
-}//pomiar
+void print_dictionary(dictionary *dict) {
+	cout << endl << "Skorowidz:" << endl;
+	while (dict != NULL) {
+		cout << "Lista " << dict->binding << ":" << endl;
+		print_list(dict->data);
+		cout << endl;
+		dict = dict->next;
+	}
+}
 
-void kopiuj_tablice(int c,t b, t a)
-{
-    int i;
-    for(i=1; i<=c+1; i++)
-        b[i]=a[i];
-}  //kopiuj_tablice
+void release_memory(dictionary* dict) {
+	while (dict != NULL)
+	{
+		dictionary* next_dict = dict->next;
+		dictionary_node* list = dict->data;
+		while (list != NULL) {
+			dictionary_node* next_list = list->next;
+			delete list;
+			list = next_list;
+		}
+		delete dict;
+		dict = next_dict;
+	}
+}
 
+//konstr i druk skorowidza z dopisywaniem na poczatku
+void variant1() {
+	int word_count = ask_for_word_count();
+	if (word_count <= 0) return;
+	dictionary* dict = new_dictionary(ask_for_word());
+	word_count--;
+	while (word_count > 0) {
+		add_to_dict_at_end(ask_for_word(), dict);
+		word_count--;
+	}
 
+	print_dictionary(dict);
+	release_memory(dict);
+}
 
+//konstr i druk skorowidza z dopisywaniem na koncu
+void variant2() {
+	int word_count = ask_for_word_count();
+	if (word_count <= 0) return;
+	dictionary* dict = new_dictionary(ask_for_word());
+	word_count--;
+	while (word_count > 0) {
+		dict = add_to_dict_at_start(ask_for_word(), dict);
+		word_count--;
+	}
+
+	print_dictionary(dict);
+	release_memory(dict);
+}
+
+//jak wariant 2 ale rowniez z dopisywaniem slow na koncu listy
+void variant3() {
+}
+
+//jak wariant 3 ale czytanie danych z pliku tekstowego
+void variant4() {
+}
+
+//czas sortowania na liscie poziomej, zadanie domowe
+void variant5() {
+	clock_t start_time = clock();
+	//
+	clock_t end_time = clock();
+	cout << "czas: " << (1000 * (float)(end_time - start_time) / CLOCKS_PER_SEC) << " [ms]" << endl;
+}
+
+int main() {
+	while (true) {
+		int variant;
+		cout << "Wariant: (0 - wyjdz/1/2/3/4/5)";
+		cin >> variant;
+		// clear cin
+		cin.ignore(1000, '\n');
+		switch (variant) {
+		case 0:
+			exit(EXIT_SUCCESS);
+			break;
+		case 1: //konstr i druk skorowidza z dopisywaniem na poczatku
+			variant1();
+			break;
+		case 2: //konstr i druk skorowidza z dopisywaniem na koncu
+			variant2();
+			break;
+		case 3:
+			variant3();
+			break;
+		case 4:
+			variant4();
+			break;
+		case 5:
+			variant5();
+			break;
+		default:
+			cout << "Taki wariant nie istnieje!";
+		} // switch
+	}
+
+	return 0;
+}
