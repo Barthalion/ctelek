@@ -24,13 +24,13 @@ int main(void)
     t a, b;
     clock_t czas1, czas2;
 
-    srand((unsigned) time(NULL))
+    srand((unsigned) time(NULL));
 
     printf("Info INT_MAX: %d\n", INT_MAX);
 
     do {
         printf("Wariant: (0/1/2) ");
-        scanf("%d",&wariant);
+        scanf("%d", &wariant);
 
         switch (wariant) {
             case 0:
@@ -52,7 +52,7 @@ int main(void)
                     generacja(n, z, a);
                     sort(n, a);
                 }
-                czas2=pomiar();
+                czas2 = pomiar();
 
                 printf("czas: %lf\n", (double) (czas2 - czas1) / (double) CLOCKS_PER_SEC);
                 break;
@@ -101,15 +101,15 @@ void sort(int n, t a)
     for (int i = 1; i <= n - 1; i++) {
         naj = a[i];
         k = i;
-        for (int j = i+1; j <= n; j++)
+        for (int j = i + 1; j <= n; j++)
             if (a[j] > naj) {
                 naj = a[j];
                 k = j;
             } //popraw
         if (i != k) {
             //zamien
-            a[k]=a[i];
-            a[i]=naj;
+            a[k] = a[i];
+            a[i] = naj;
         }
         /*printf("\n");
         printf("i= %3d",i);
@@ -133,7 +133,7 @@ void maxindeks(int n, int first, t a, int *k)
 void sort1(int n, t a)
 {
     int k, naj;
-    for (int i = 1; i<= n - 1; i++) {
+    for (int i = 1; i <= n - 1; i++) {
         maxindeks(n, i, a, &k);
         if (i != k) {
             naj = a[k];
