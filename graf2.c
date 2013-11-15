@@ -10,8 +10,8 @@
 #define M_PI 3.14159265358979323846264338327
 #endif
 
-#define NMAX 101
-#define KMAX NMAX*(NMAX-1)/2
+#define NMAX 100
+#define KMAX NMAX*NMAX/2
 #define VIEWER "c:/VIEWER1.exe"
 
 typedef bool t2[NMAX][NMAX];
@@ -57,7 +57,7 @@ int main(void)
             case 1: //Gnp
                 czyt(&n, &rep, &p);
                 druk1(n, rep, p);
-                for (int i = 1; i <= rep; i++) {
+                for (int i = 0; i < rep; i++) {
                     Gnp(n, p, A);
                     drukA(n, A);
                 }
@@ -65,7 +65,7 @@ int main(void)
             case 2: //czas Gnp
                 czyt(&n, &rep, &p);
                 czas1 = pomiar();
-                for (int i = 1; i <= rep; i++)
+                for (int i = 0; i < rep; i++)
                     Gnp(n, p, A);
                 czas2 = pomiar();
                 printf("czas: %f [s]\n", (float)(czas2 - czas1) / (float)CLOCKS_PER_SEC);
@@ -74,7 +74,7 @@ int main(void)
                 czyt1(&n, &k, &rep);
                 druk1a(n, k, rep);
                 init(n, E, &total);
-                for (int i = 1; i <= rep; i++) {
+                for (int i = 0; i < rep; i++) {
                     Gnk(k, total, E);
                     drukE(k, total, E);
                     transEA(n, k, total, E, A);
@@ -97,7 +97,7 @@ int main(void)
 
                 czyt(&n, &rep, &p);
                 druk1(n, rep, p);
-                for (int i = 1; i <= rep; i++) {
+                for (int i = 0; i < rep; i++) {
                     Gnp(n, p, A);
                     //drukA(n,A);
                     pdrukAPOZ(plik, n, A);
@@ -146,9 +146,9 @@ void Gnp(int n, float p, t2 A)
 {
     bool x;
 
-    for (int i = 1; i <= n; i++) A[i][i] = false;
-    for (int i = 1; i <= n - 1; i++)
-        for (int j = i + 1; j <= n; j++) {
+    for (int i = 0; i < n; i++) A[i][i] = false;
+    for (int i = 0; i < n - 1; i++)
+        for (int j = i + 1; j < n; j++) {
             //x = (random(1001)*0.001) <= p;
             x = Random() <= p;
             A[i][j] = x;
@@ -168,8 +168,8 @@ void init(int n, t1 E, int *total)
 {
     int h = 0;
 
-    for (int i = 1; i <= n - 1; i++)
-        for (int j = i + 1; j <= n; j++) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = i + 1; j < n; j++) {
             h++;
             E[h].a = i;
             E[h].b = j;
@@ -182,7 +182,7 @@ void Gnk(int k, int total, t1 E)
     int  z;
     r x;
 
-    for (int i = 1; i <= k; i++) {
+    for (int i = 0; i < k; i++) {
         z = random(total) + 1;
         x = E[z];
         E[z] = E[total];
@@ -193,8 +193,8 @@ void Gnk(int k, int total, t1 E)
 
 void transEA(int n, int k, int total, t1 E, t2 A)
 {
-    for (int i = 1; i <= n; i++)
-        for (int j = 1; j <= n; j++)
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
             A[i][j] = false;
 
     int i, j;
@@ -234,8 +234,8 @@ void drukA(int n, t2 A)
     int h = 0;
 
     printf("\nKrawedzie z A:\n");
-    for (int i = 1; i <= n - 1; i++)
-        for (int j = i + 1; j <= n; j++) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = i + 1; j < n; j++) {
             if (A[i][j]) {
                 h++;
                 printf("%4d%3d", i, j);
@@ -255,13 +255,13 @@ void pdrukAPOZ(FILE *out, int n, t2 A)
     int x, y;
     float dpn, dpni;
     fprintf(out, "%d ", n);
-    for (int i = 1; i <= n - 1; i++)
-        for (int j = i + 1; j <= n; j++)
+    for (int i = 0; i <= n - 1; i++)
+        for (int j = i + 1; j < n; j++)
             if (A[i][j]) fprintf(out, "1");
             else fprintf(out, "0");
     fprintf(out, " ");
     dpn = 2 * M_PI / n;
-    for (int i = 1; i <= n; i++) {
+    for (int i = 0; i < n; i++) {
         dpni = (i - 1) * dpn;
         x = 150 + (int)(0.9 * 150 * sin(dpni));
         y = 150 + (int)(0.9 * 150 * cos(dpni));
@@ -275,7 +275,7 @@ void pdrukASVG(FILE *out, int n, t2 A)
     int x[NMAX], y[NMAX];
     float dpn, dpni;
     dpn = 2 * M_PI / n;
-    for (int i = 1; i <= n; i++) {
+    for (int i = 0; i < n; i++) {
         dpni = (i - 1) * dpn;
         x[i] = 150 + (int)(0.9 * 150 * sin(dpni));
         y[i] = 150 + (int)(0.9 * 150 * cos(dpni));
@@ -283,11 +283,11 @@ void pdrukASVG(FILE *out, int n, t2 A)
     fprintf(out, "<?xml version=\"1.0\" standalone=\"no\"?>\n");
     fprintf(out, "<svg  viewBox=\"0 0 306 306\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
 
-    for (int i = 1; i <= n - 1; i++)
+    for (int i = 0; i < n - 1; i++)
         for (int j = i + 1; j <= n; j++)
             if (A[i][j]) fprintf(out, "<path  fill=\"none\" stroke=\"#000000\" stroke-width=\"4\" d=\"M %d %d L %d %d Z \"/>\n", x[i], y[i], x[j], y[j]);
 
-    for (int i = 1; i <= n; i++)
+    for (int i = 0; i < n; i++)
         fprintf(out, "<circle cx=\"%d\" cy=\"%d\" r=\"10\" style=\"stroke:black; fill:white; stroke-width:1\"/>\n", x[i], y[i]);
     fprintf(out, "</svg>\n");
 }
