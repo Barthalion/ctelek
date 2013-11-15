@@ -4,15 +4,15 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define nmax 101
-#define kmax nmax*(nmax-1)/2
+#define NMAX 100
+#define KMAX NMAX*(NMAX)/2
 
-typedef bool t2[nmax][nmax]; // A
-typedef int t[nmax];
+typedef bool t2[NMAX][NMAX]; // A
+typedef int t[NMAX];
 typedef struct {
     int a, b;
 } r;
-typedef r t1[kmax]; // E
+typedef r t1[KMAX]; // E
 
 clock_t pomiar(void);
 static inline float Random(void);
@@ -47,7 +47,7 @@ int main(void)
             case 1: //Gnp
                 czyt(&n, &rep, &p);
                 druk1(n, rep, p);
-                for (int i = 1; i <= rep; i++) {
+                for (int i = 0; i < rep; i++) {
                     Gnp(n, p, A);
                     drukA(n, A);
                 }
@@ -55,7 +55,7 @@ int main(void)
             case 2: //czas Gnp
                 czyt(&n, &rep, &p);
                 czas1 = pomiar();
-                for (int i = 1; i <= rep; i++)
+                for (int i = 0; i < rep; i++)
                     Gnp(n, p, A);
                 czas2 = pomiar();
                 printf("czas: %f [s]\n", (float)(czas2 - czas1) / (float)CLOCKS_PER_SEC);
@@ -64,7 +64,7 @@ int main(void)
                 czyt1(&n, &k, &rep);
                 druk1a(n, k, rep);
                 init(n, E, &total);
-                for (int i = 1; i <= rep; i++) {
+                for (int i = 0; i < rep; i++) {
                     Gnk(k, total, E);
                     drukE(k, total, E);
                     transEA(n, k, total, E, A);
@@ -100,18 +100,18 @@ void czyt(int *n, int *rep, float *p)
     do {
         printf("n, p, rep= ");
         scanf("%d %f %d", n, p, rep);
-    } while ((*n > nmax) && (*p > 1) && (*rep > 100000));
+    } while ((*n > NMAX) && (*p > 1) && (*rep > 100000));
 }
 
 void Gnp (int n, float p, t2 A)
 {
     bool x;
 
-    for (int i = 1; i <= n; i++)
+    for (int i = 0; i < n; i++)
         A[i][i] = false;
-    for (int i = 1; i <= n - 1; i++)
-        for (int j = i + 1; j <= n; j++) {
-            //x=(random(1001) * 0.001) <= p;
+    for (int i = 0; i < n - 1; i++)
+        for (int j = i + 1; j < n; j++) {
+            //x = (random(1001) * 0.001) <= p;
             x = Random() <= p;
 
             A[i][j] = x;
@@ -124,14 +124,14 @@ void czyt1(int *n, int * k, int *rep)
     do {
         printf("n, k, rep= ");
         scanf("%d %d %d", n, k, rep);
-    } while ((*n > nmax) && (*k > kmax) && (*rep > 100000));
+    } while ((*n > NMAX) && (*k > KMAX) && (*rep > 100000));
 }
 
 void init(int n, t1 E, int * total)
 {
     int h = 0;
-    for (int i = 1; i <= n - 1; i++)
-        for (int j = i + 1; j <= n; j++) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = i + 1; j < n; j++) {
             h++;
             E[h].a = i;
             E[h].b = j;
@@ -144,7 +144,7 @@ void Gnk(int k, int total, t1 E)
     int l, z;
     r x;
     l = total;
-    for (int i = 1; i <= k; i++) {
+    for (int i = 0; i < k; i++) {
         z = random(l) + 1;
         x = E[z];
         E[z] = E[l];
@@ -155,8 +155,8 @@ void Gnk(int k, int total, t1 E)
 
 void transEA(int n, int k, int total, t1 E, t2 A)
 {
-    for (int i = 1; i <= n; i++)
-        for (int j = 1; j <= n; j++)
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
             A[i][j] = false;
     for (int l = total; l >= total - k + 1; l--) {
         int i = E[l].a;
@@ -192,8 +192,8 @@ void drukA(int n, t2 A)
 {
     int h = 0;
     printf("\nKrawedzie z A:\n");
-    for (int i = 1; i <= n - 1; i++)
-        for (int j = i + 1; j <= n; j++) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = i + 1; j < n; j++) {
             if (A[i][j]) {
                 h++;
                 printf("%4d%3d", i, j);
