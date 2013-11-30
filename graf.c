@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "ctelek.h"
 
 #define NMAX 100
 #define KMAX NMAX*(NMAX)/2
@@ -14,9 +15,9 @@ typedef struct {
 } r;
 typedef r t1[KMAX]; // E
 
-clock_t pomiar(void);
-static inline float Random(void);
-static inline int random(int n);
+extern float Random(void);
+extern clock_t pomiar(void);
+extern int random(int n);
 void czyt(int *n, int *rep, float *p);
 void czyt1(int *n, int * k, int *rep);
 void druk1a(int n, int k, int rep);
@@ -81,18 +82,6 @@ int main(void)
                 exit(EXIT_FAILURE);
         } // switch
     } while (true);
-}
-
-static inline float Random(void)
-{
-    return (rand() % 10000) * 0.0001;
-    //return (float) rand() / (float) INT_MAX;
-    //return rand() * 4.656612875245796924105750827168e-10;
-}
-
-static inline int random(int n)
-{
-    return rand() % n;
 }
 
 void czyt(int *n, int *rep, float *p)
@@ -202,10 +191,5 @@ void drukA(int n, t2 A)
             }
         }
     printf("\n\n");
-}
-
-clock_t pomiar(void)
-{
-    return clock();
 }
 

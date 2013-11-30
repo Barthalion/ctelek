@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "ctelek.h"
 
 #define nmax 100
 typedef int t[nmax];
@@ -8,10 +9,10 @@ typedef int t[nmax];
 /* int Max(int n, t a);
  * int Max1(int n, t a, int * poz);
  * loat Srednia(int n, t a); */
+extern void generacja(int n, int z, t a);
 int Min(int n, t a);
 void czyt(int *n, int *z);
 void druk(int n, int z, t a, int m);
-void generacja(int n, int z, t a);
 void obl(int n, t a, int *m);
 
 int main(void)
@@ -50,12 +51,6 @@ void czyt(int *n, int *z)
     } while (*n > nmax);
 }
 
-void generacja(int n, int z, t a)
-{
-    for (int i = 0; i < n; i++)
-        a[i] = rand() % z + 1;
-}
-
 int Min(int n, t a)
 {
     int x = a[0];
@@ -75,7 +70,7 @@ void druk(int n, int z, t a, int m)
     printf("\nElementy ciagu, n=%d, z=%d\n", n, z);
     for (int i = 0; i < n; i++) {
         printf("%4d", a[i]);
-        if ((i % 10 == 0) && (i > 0))
+        if ((i % 10 == 0) && (i != 0))
             printf("\n");
     }
     printf("\n");

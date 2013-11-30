@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "ctelek.h"
 
-#define NMAX 101
+#define NMAX 100
 
 typedef bool t2[NMAX][NMAX]; // A
 typedef bool t3[NMAX]; // x
@@ -22,9 +23,9 @@ typedef rs ts[NMAX]; // S
 
 bool spojny1(int n, t2 A);
 bool spojny(int n, t2 A);
-clock_t pomiar(void);
-static inline float Random(void);
-static inline int random(int n);
+extern float Random(void);
+extern clock_t pomiar(void);
+extern int random(int n);
 void czyt(int *n, int *rep, float *p);
 void druk1(int n, int rep, float p);
 void drukA(int n, t2 A);
@@ -119,16 +120,6 @@ int main(void)
                 exit(EXIT_FAILURE);
         }
     } while (true);
-}
-
-static inline float Random(void)
-{
-        return (rand() % 10000) *0.0001;
-}
-
-static inline int random(int n)
-{
-        return rand() % n;
 }
 
 void czyt(int *n, int *rep, float *p)
@@ -356,9 +347,4 @@ void drukS1(int n, ts S)
         printf("\n");
     }
     printf("\n");
-}
-
-clock_t pomiar(void)
-{
-    return clock();
 }
