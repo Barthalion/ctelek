@@ -168,12 +168,9 @@ void init(int n, t1 E, int *total)
 
 void Gnk(int k, int total, t1 E)
 {
-    int  z;
-    r x;
-
     for (int i = 0; i < k; i++) {
-        z = random(total) + 1;
-        x = E[z];
+        int z = random(total) + 1;
+        r x = E[z];
         E[z] = E[total];
         E[total] = x;
         total--;
@@ -186,11 +183,9 @@ void transEA(int n, int k, int total, t1 E, t2 A)
         for (int j = 0; j < n; j++)
             A[i][j] = false;
 
-    int i, j;
-
     for (int l = total; l >= total - k + 1; l--) {
-        i = E[l].a;
-        j = E[l].b;
+        int i = E[l].a;
+        int j = E[l].b;
         A[i][j] = true;
         A[j][i] = true;
     }
@@ -236,19 +231,17 @@ void drukA(int n, t2 A)
 
 void pdrukAPOZ(FILE *out, int n, t2 A)
 {
-    int x, y;
-    float dpn, dpni;
     fprintf(out, "%d ", n);
     for (int i = 0; i <= n - 1; i++)
         for (int j = i + 1; j < n; j++)
             if (A[i][j]) fprintf(out, "1");
             else fprintf(out, "0");
     fprintf(out, " ");
-    dpn = 2 * M_PI / n;
+    float dpn = 2 * M_PI / n;
     for (int i = 0; i < n; i++) {
-        dpni = (i - 1) * dpn;
-        x = 150 + (int)(0.9 * 150 * sin(dpni));
-        y = 150 + (int)(0.9 * 150 * cos(dpni));
+        float dpni = (i - 1) * dpn;
+        int x = 150 + (int)(0.9 * 150 * sin(dpni));
+        int y = 150 + (int)(0.9 * 150 * cos(dpni));
         fprintf(out, "%d %d ", x, y);
     }
     fprintf(out, "\n");
