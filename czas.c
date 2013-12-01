@@ -92,10 +92,9 @@ void druk(int n, t a)
 
 void sort(int n, t a)
 {
-    int k, naj;
     for (int i = 0; i < n - 1; i++) {
-        naj = a[i];
-        k = i;
+        int naj = a[i];
+        int k = i;
         for (int j = i + 1; j < n; j++)
             if (a[j] > naj) {
                 naj = a[j];
