@@ -154,7 +154,7 @@ void strukt(int n, int rep, float p, t5 Q) //n=4
 {
     t2 A;
     t deg;
-    int k, s, w, nr;
+    int k, s, nr;
 
     for (int i = 1; i <= 11; i++)
         Q[i] = 0;
@@ -167,7 +167,7 @@ void strukt(int n, int rep, float p, t5 Q) //n=4
                     s++;
             deg[i] = s;
         }
-        w = 0;
+        int w = 0;
         for (int i = 1; i <= n; i++)
             if (deg[i] == 2)
                 w++;
