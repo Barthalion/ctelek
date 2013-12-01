@@ -208,13 +208,11 @@ void init(int n, t1 E, int * total)
 
 void Gnk(int k, int total, t1 E)
 {
-    int l, z;
-    r x;
-    l = total;
+    int l = total;
 
     for (int i = 1; i <= k; i++) {
-        z = random(l) + 1;
-        x = E[z];
+        int z = random(l) + 1;
+        r x = E[z];
         E[z] = E[l];
         E[l] = x;
         l--;
@@ -223,15 +221,13 @@ void Gnk(int k, int total, t1 E)
 
 void transEA(int n, int k, int total, t1 E, t2 A)
 {
-    int i, j;
-
     for (int i = 1; i <= n; i++)
         for (int j = 1; j <= n; j++)
             A[i][j] = false;
 
     for (int l = total; l >= total - k + 1; l--) {
-        i = E[l].a;
-        j = E[l].b;
+        int i = E[l].a;
+        int j = E[l].b;
         A[i][j] = true;
         A[j][i] = true;
     }
@@ -310,13 +306,12 @@ int cykl4_1(int n, t2 A)
 
 int cykl4TF(int n, t2 A)
 {
-    int c,
-        x = 0;
+    int x = 0;
 
     if (n >= 4)
         for (int i = 1; i <= n - 1; i++)
             for (int j = i + 1; j <= n; j++) {
-                c = 0;
+                int c = 0;
                 for (int k = i + 1; k <= n; k++)
                     if (A[i][k] && A[j][k])
                         c++;
@@ -373,8 +368,6 @@ void drukA(int n, t2 A)
 
 void druk2(int alltr, int rep, t3 Q, float x, float y)
 {
-    int j;
-
     printf("Distibution of triangles:\n");
     printf("     ");
     for (int i = 0; i <= 9; i++)
@@ -383,8 +376,7 @@ void druk2(int alltr, int rep, t3 Q, float x, float y)
     for (int i = 0; i <= 9; i++)
         printf("-------");
     for (int i = 0; i <= alltr; i++) {
-        j = i % 10;
-        if (j == 0)
+        if (i % 10  == 0)
             printf("\n%3d\t", i);
         printf("%7.4f", Q[i] / (float)rep);
     }
