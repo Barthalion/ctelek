@@ -22,7 +22,7 @@ inline float Random(void)
 
 inline clock_t pomiar(void)
 {
-    return (clock_t) clock();
+    return clock();
 }
 
 inline int random(int n)
